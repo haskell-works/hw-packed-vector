@@ -7,21 +7,22 @@ module HaskellWorks.Data.PackedVector.PackedVector64
   , toList
   ) where
 
+import Data.Int
+import Data.Word
+import HaskellWorks.Data.AtIndex
+import HaskellWorks.Data.Bits.BitWise
+import HaskellWorks.Data.Bits.LoBitsSized
+import HaskellWorks.Data.PackedVector.Internal
+import HaskellWorks.Data.Positioning
+import HaskellWorks.Data.Unsign
+import Prelude                                 hiding (length)
+
 import qualified Data.Vector.Storable as DVS
-import           Data.Int
-import           Data.Word
-import           HaskellWorks.Data.AtIndex
-import           HaskellWorks.Data.Bits.BitWise
-import           HaskellWorks.Data.Bits.LoBitsSized
-import           HaskellWorks.Data.PackedVector.Internal
-import           HaskellWorks.Data.Positioning
-import           HaskellWorks.Data.Unsign
-import           Prelude hiding (length)
 
 data PackedVector64 = PackedVector64
-    { swBuffer      :: !(DVS.Vector Word64)
-    , swBitSize     :: !Word
-    , swBufferLen   :: !Int
+    { swBuffer    :: !(DVS.Vector Word64)
+    , swBitSize   :: !Word
+    , swBufferLen :: !Int
     } deriving (Eq, Show)
 
 empty :: PackedVector64
