@@ -37,10 +37,14 @@ test-suite hw-packed-vector-test
   main-is:              Spec.hs
   other-modules:        HaskellWorks.Data.PackedVector.PackedVector64Spec
                       , HaskellWorks.Data.PackedVector.InternalSpec
+                      , HaskellWorks.Gen
   build-depends:        base                          >= 4          && < 5
                       , bytestring
+                      , hedgehog
                       , hspec
                       , hw-bits                       >= 0.4.0.0
+                      , hw-hedgehog
+                      , hw-hspec-hedgehog
                       , hw-packed-vector
                       , hw-prim                       >= 0.4.0.0
                       , QuickCheck

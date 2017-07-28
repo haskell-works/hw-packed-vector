@@ -1,38 +1,25 @@
-{-# OPTIONS_GHC -fno-warn-incomplete-patterns #-}
-{-# LANGUAGE    ScopedTypeVariables           #-}
-
 module HaskellWorks.Data.PackedVector.InternalSpec (spec) where
 
-import           Data.Word
-import           HaskellWorks.Data.Bits.BitWise
-import           HaskellWorks.Data.PackedVector.Internal
-import           HaskellWorks.Data.Positioning
-import           Test.Hspec
-import           Test.QuickCheck
+import HaskellWorks.Data.PackedVector.Internal
+import HaskellWorks.Hspec.Hedgehog
+import Hedgehog
+import Test.Hspec
+
+import qualified HaskellWorks.Gen as G
+import qualified Hedgehog.Gen     as G
+import qualified Hedgehog.Range   as R
 
 {-# ANN module ("HLint: Ignore Redundant do" :: String) #-}
 
-subWordSize :: Count -> Gen Count
-subWordSize maxWordSize = choose (1, maxWordSize)
-
-word8OfSize :: Count -> Gen Word8
-word8OfSize sz = choose (0, 1 .<. fromIntegral sz - 1)
-
-word64OfSize :: Count -> Gen Word64
-word64OfSize sz = choose (0, 1 .<. fromIntegral sz - 1)
-
-listLen :: Gen Int
-listLen = choose (1, 128)
-
 spec :: Spec
 spec = describe "HaskellWorks.Data.PackedVector.InternalSpec" $ do
-  it "PackedVector Word8" $
-    forAll (subWordSize 8) $ \wSize ->
-      forAll (choose (1, 3)) $ \len ->
-        forAll (vectorOf len (word8OfSize wSize)) $ \ws ->
-          unpackBits (length ws) wSize (packBits wSize ws) `shouldBe` ws
-  it "PackedVector Word64" $
-    forAll (subWordSize 64) $ \wSize ->
-      forAll listLen $ \len ->
-        forAll (vectorOf len (word64OfSize wSize)) $ \ws ->
-          unpackBits (length ws) wSize (packBits wSize ws) `shouldBe` ws
+  it "PackedVector Word8" $ require $ property $ do
+    wSize <- forAll $ G.subWordSize 8
+    len   <- forAll $ G.int   (R.linear 1 3)
+    ws    <- forAll $ G.list  (R.singleton len) (G.word8OfSize wSize)
+    unpackBits (length ws) wSize (packBits wSize ws) === ws
+  it "PackedVector Word64" $ require $ property $ do
+    wSize <- forAll $ G.subWordSize 64
+    len   <- forAll $ G.int   (R.linear 1 128)
+    ws    <- forAll $ G.list  (R.singleton len) (G.word64OfSize wSize)
+    unpackBits (length ws) wSize (packBits wSize ws) === ws

@@ -1,5 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-
 module HaskellWorks.Data.PackedVector
     ( module X
     ) where
