@@ -1,0 +1,49 @@
+name: hw-packed-vector
+version: '0.0.0.1'
+synopsis: Packed Vector
+description: Please see README.md
+category: Data, Vector
+author: John Ky
+maintainer: newhoggy@gmail.com
+copyright: 2016 John Ky
+license: BSD3
+github: haskell-works/hw-packed-vector
+homepage: http://github.com/haskell-works/hw-packed-vector#readme
+extra-source-files:
+- README.md
+ghc-options: -Wall
+dependencies:
+- base >=4 && <5
+- bytestring
+- hw-bits >=0.4.0.0
+- hw-prim >=0.4.0.0
+- vector
+library:
+  source-dirs: src
+  ghc-options:
+  - -O2
+  - -msse4.2
+  exposed-modules:
+  - HaskellWorks.Data.PackedVector
+  - HaskellWorks.Data.PackedVector.Internal
+  - HaskellWorks.Data.PackedVector.PackedVector64
+  dependencies:
+  - hw-int >=0.0.0.1
+  - hw-string-parse >=0.0.0.1
+  - safe
+tests:
+  hw-packed-vector-test:
+    main: Spec.hs
+    source-dirs: test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - hedgehog
+    - hspec
+    - hw-hedgehog
+    - hw-hspec-hedgehog
+    - hw-packed-vector
+    - QuickCheck
+stability: Experimental
