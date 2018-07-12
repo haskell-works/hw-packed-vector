@@ -1,12 +1,7 @@
-resolver: lts-9.1
+resolver: lts-12.0
 
 packages:
 - '.'
-
-extra-deps:
-  - hedgehog-0.5
-  - hw-hedgehog-0.1.0.0
-  - hw-hspec-hedgehog-0.1.0.0
 
 flags: {}
 
