@@ -5,7 +5,7 @@ description: Please see README.md
 category: Data, Vector
 author: John Ky
 maintainer: newhoggy@gmail.com
-copyright: 2016 John Ky
+copyright: 2016-2018 John Ky
 license: BSD3
 github: haskell-works/hw-packed-vector
 homepage: http://github.com/haskell-works/hw-packed-vector#readme
@@ -13,10 +13,10 @@ extra-source-files:
 - README.md
 ghc-options: -Wall
 dependencies:
-- base >=4 && <5
+- base              >= 4          && < 5
 - bytestring
-- hw-bits >=0.4.0.0
-- hw-prim >=0.4.0.0
+- hw-bits           >= 0.4.0.0
+- hw-prim           >= 0.4.0.0
 - vector
 library:
   source-dirs: src
@@ -28,8 +28,8 @@ library:
   - HaskellWorks.Data.PackedVector.Internal
   - HaskellWorks.Data.PackedVector.PackedVector64
   dependencies:
-  - hw-int >=0.0.0.1
-  - hw-string-parse >=0.0.0.1
+  - hw-int            >= 0.0.0.1
+  - hw-string-parse   >= 0.0.0.1
   - safe
 tests:
   hw-packed-vector-test:
