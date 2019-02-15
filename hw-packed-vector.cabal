@@ -1,0 +1,67 @@
+name:           hw-packed-vector
+version:        0.0.0.1
+synopsis:       Packed Vector
+description:    Packed Vector. Please see README.md
+category:       Data, Vector
+stability:      Experimental
+homepage:       http://github.com/haskell-works/hw-packed-vector#readme
+bug-reports:    https://github.com/haskell-works/hw-packed-vector/issues
+author:         John Ky
+maintainer:     newhoggy@gmail.com
+copyright:      2016-2018 John Ky
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+cabal-version:  >= 1.10
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/haskell-works/hw-packed-vector
+
+library
+  exposed-modules:
+      HaskellWorks.Data.PackedVector
+      HaskellWorks.Data.PackedVector.Internal
+      HaskellWorks.Data.PackedVector.PackedVector64
+  other-modules:
+      Paths_hw_packed_vector
+  hs-source-dirs:
+      src
+  ghc-options: -Wall -O2 -msse4.2
+  build-depends:
+      base >=4 && <5
+    , bytestring
+    , hw-bits >=0.4.0.0
+    , hw-int >=0.0.0.1
+    , hw-prim >=0.4.0.0
+    , hw-string-parse >=0.0.0.1
+    , safe
+    , vector
+  default-language: Haskell2010
+
+test-suite hw-packed-vector-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      HaskellWorks.Data.PackedVector.InternalSpec
+      HaskellWorks.Data.PackedVector.PackedVector64Spec
+      HaskellWorks.Gen
+      Paths_hw_packed_vector
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base >=4 && <5
+    , bytestring
+    , hedgehog
+    , hspec
+    , hw-bits >=0.4.0.0
+    , hw-hedgehog
+    , hw-hspec-hedgehog
+    , hw-packed-vector
+    , hw-prim >=0.4.0.0
+    , vector
+  default-language: Haskell2010
