@@ -1,4 +1,5 @@
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE TypeFamilies  #-}
 
 module HaskellWorks.Data.PackedVector.PackedVector64
   ( PackedVector64(..)
@@ -7,8 +8,10 @@ module HaskellWorks.Data.PackedVector.PackedVector64
   , toList
   ) where
 
+import Control.DeepSeq
 import Data.Int
 import Data.Word
+import GHC.Generics
 import HaskellWorks.Data.AtIndex
 import HaskellWorks.Data.Bits.BitWise
 import HaskellWorks.Data.Bits.LoBitsSized
@@ -20,10 +23,12 @@ import Prelude                                 hiding (length)
 import qualified Data.Vector.Storable as DVS
 
 data PackedVector64 = PackedVector64
-    { swBuffer    :: !(DVS.Vector Word64)
-    , swBitSize   :: !Word
-    , swBufferLen :: !Int
-    } deriving (Eq, Show)
+  { swBuffer    :: !(DVS.Vector Word64)
+  , swBitSize   :: !Word
+  , swBufferLen :: !Int
+  } deriving (Eq, Show, Generic)
+
+instance NFData PackedVector64
 
 empty :: PackedVector64
 empty =
