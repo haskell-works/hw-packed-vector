@@ -59,7 +59,7 @@ instance AtIndex PackedVector64 where
         let loBitsSize  = 64 - toCount r
             hiBitsSize  = bitSize - loBitsSize
             loBits      = ((vv !!! q) .>. unsign r) .&. loBitsSized loBitsSize
-            hiBits      = if r > 64 - fromIntegral bitSize then (vv !!! (q + 1)) .&. loBitsSized hiBitsSize else 0
+            hiBits      = (vv !!! (q + 1)) .&. loBitsSized hiBitsSize
         in  loBits .|. (hiBits .<. loBitsSize)
   (!!!)       = atIndex
   {-# INLINE (!!!)   #-}
