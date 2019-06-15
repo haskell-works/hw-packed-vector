@@ -20,7 +20,8 @@ makeBenchW64s = do
   let files = ("data/bench/" ++) <$> (".word64s" `isSuffixOf`) `filter` entries
   benchmarks <- forM files $ \file -> return
     [ env (IO.mmapFromForeignRegion file) $ \(v :: DVS.Vector Word64) -> bgroup "blah" $ mempty
-      <> [bench ("DVS.size" <> file) (whnf (PV.fromList (HW.length v)) (DVS.toList v))]
+      <> [bench ("DVS.fromList"  <> file) (whnf (PV.fromList                10) (DVS.toList v))]
+      <> [bench ("DVS.fromListN" <> file) (whnf (PV.fromListN (HW.length v) 10) (DVS.toList v))]
     ]
   return (join benchmarks)
 
