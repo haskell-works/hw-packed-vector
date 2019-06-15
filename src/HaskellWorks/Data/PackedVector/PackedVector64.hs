@@ -5,6 +5,7 @@ module HaskellWorks.Data.PackedVector.PackedVector64
   ( PackedVector64(..)
   , empty
   , fromList
+  , fromListN
   , toList
   ) where
 
@@ -65,11 +66,17 @@ instance AtIndex PackedVector64 where
   {-# INLINE atIndex #-}
 
 fromList :: Count -> [Word64] -> PackedVector64
-fromList wl ws =
-  PackedVector64
-  { swBuffer    = DVS.fromList (packBits wl ws)
+fromList wordLength ws = PackedVector64
+  { swBuffer    = DVS.fromList (packBits wordLength ws)
   , swBufferLen = fromIntegral (length ws)
-  , swBitSize   = fromIntegral wl
+  , swBitSize   = fromIntegral wordLength
+  }
+
+fromListN :: Count -> Count -> [Word64] -> PackedVector64
+fromListN vectorSize wordLength ws = PackedVector64
+  { swBuffer    = DVS.fromListN (fromIntegral vectorSize) (packBits wordLength ws)
+  , swBufferLen = fromIntegral (length ws)
+  , swBitSize   = fromIntegral wordLength
   }
 
 toList :: PackedVector64 -> [Word64]
