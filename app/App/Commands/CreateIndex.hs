@@ -48,7 +48,8 @@ runCreateIndex opts = do
 
     let ws = fmap fromIntegral (decodeWord32s lbs) :: [Word64]
 
-    PV.createFileIndex (opts ^. the @"output") wordSize (fromIntegral inSize) ws
+    IO.withBinaryFile (opts ^. the @"output") IO.WriteMode $ \hOut ->
+      PV.createFileIndex hOut wordSize (fromIntegral inSize) ws
 
 optsCreateIndex :: Parser Z.CreateIndexOptions
 optsCreateIndex = Z.CreateIndexOptions
