@@ -7,10 +7,12 @@ module HaskellWorks.Data.PackedVector.PackedVector64
   , fromList
   , fromListN
   , toList
+  , createFileIndex
   ) where
 
 import Control.DeepSeq
 import Data.Int
+import Data.Semigroup                          ((<>))
 import Data.Word
 import GHC.Generics
 import HaskellWorks.Data.AtIndex
@@ -21,7 +23,10 @@ import HaskellWorks.Data.Positioning
 import HaskellWorks.Data.Unsign
 import Prelude                                 hiding (length)
 
-import qualified Data.Vector.Storable as DVS
+import qualified Data.ByteString.Builder as B
+import qualified Data.ByteString.Lazy    as LBS
+import qualified Data.Vector.Storable    as DVS
+import qualified System.IO               as IO
 
 data PackedVector64 = PackedVector64
   { swBuffer    :: !(DVS.Vector Word64)
@@ -81,3 +86,43 @@ fromListN vectorSize wordLength ws = PackedVector64
 
 toList :: PackedVector64 -> [Word64]
 toList v = unpackBits (swBufferLen v) (fromIntegral (swBitSize v)) (DVS.toList (swBuffer v))
+
+encodePacked :: Count -> [Word64] -> B.Builder
+encodePacked wordSize = go 0 0
+  where go :: Count -> Word64 -> [Word64] -> B.Builder
+        go 0           _   [] = mempty
+        go _           acc [] = B.word64LE acc
+        go bitsWritten acc (w:ws) =
+          let totalBits   = bitsWritten + wordSize
+              excessBits  = totalBits - 64
+              newAcc      = (w .<. bitsWritten) .|. acc
+          in if totalBits >= 64
+            then B.word64LE newAcc <>             go excessBits (w .>. (wordSize - excessBits))     ws
+            else let freeBits = 64 - totalBits in go totalBits  (newAcc .<. freeBits .>. freeBits)  ws
+
+createFileIndex :: FilePath -> Count -> Count -> [Word64] -> IO ()
+createFileIndex filename wordSize inSize ws = IO.withBinaryFile filename IO.WriteMode $ \hOut -> do
+  headerPos <- IO.hTell hOut
+
+  B.hPutBuilder hOut $ mempty
+    <> B.word64LE wordSize              -- Number of bits in a packed word
+    <> B.word64LE (fromIntegral inSize) -- Number of entries
+    <> B.word64LE 0                     -- Number of bytes in packed vector
+
+  startPos <- IO.hTell hOut
+
+  -- TODO Write packed vector instead
+  LBS.hPut hOut (B.toLazyByteString (encodePacked wordSize ws))
+
+  endPos <- IO.hTell hOut
+
+  let vBytes = endPos - startPos
+
+  IO.hSeek hOut IO.AbsoluteSeek headerPos
+
+  B.hPutBuilder hOut $ mempty
+    <> B.word64LE wordSize              -- Number of bits in a packed word
+    <> B.word64LE (fromIntegral inSize) -- Number of entries
+    <> B.word64LE (fromIntegral vBytes) -- Number of bytes in packed vector
+
+  IO.hSeek hOut IO.AbsoluteSeek endPos

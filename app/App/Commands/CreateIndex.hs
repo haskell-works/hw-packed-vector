@@ -9,18 +9,16 @@ module App.Commands.CreateIndex
 import Control.Lens
 import Control.Monad
 import Data.Generics.Product.Any
-import Data.Semigroup                 ((<>))
+import Data.Semigroup            ((<>))
 import Data.Word
-import HaskellWorks.Data.Bits.BitWise
-import HaskellWorks.Data.Positioning
-import Options.Applicative            hiding (columns)
+import Options.Applicative       hiding (columns)
 
-import qualified App.Commands.Types      as Z
-import qualified Data.Binary.Get         as G
-import qualified Data.ByteString.Builder as B
-import qualified Data.ByteString.Lazy    as LBS
-import qualified System.Exit             as IO
-import qualified System.IO               as IO
+import qualified App.Commands.Types                            as Z
+import qualified Data.Binary.Get                               as G
+import qualified Data.ByteString.Lazy                          as LBS
+import qualified HaskellWorks.Data.PackedVector.PackedVector64 as PV
+import qualified System.Exit                                   as IO
+import qualified System.IO                                     as IO
 
 {-# ANN module ("HLint: ignore Reduce duplication"  :: String) #-}
 {-# ANN module ("HLint: ignore Redundant do"        :: String) #-}
@@ -34,19 +32,6 @@ decodeWord32s = fmap (G.runGet G.getWord32le) . go
             else if LBS.length lt == 0
               then []
               else [LBS.take 4 (lt <> LBS.replicate 4 0)]
-
-encodePacked :: Count -> [Word64] -> B.Builder
-encodePacked wordSize = go 0 0
-  where go :: Count -> Word64 -> [Word64] -> B.Builder
-        go 0           _   [] = mempty
-        go _           acc [] = B.word64LE acc
-        go bitsWritten acc (w:ws) =
-          let totalBits   = bitsWritten + wordSize
-              excessBits  = totalBits - 64
-              newAcc      = (w .<. bitsWritten) .|. acc
-          in if totalBits >= 64
-            then B.word64LE newAcc <>             go excessBits (w .>. (wordSize - excessBits))     ws
-            else let freeBits = 64 - totalBits in go totalBits  (newAcc .<. freeBits .>. freeBits)  ws
 
 runCreateIndex :: Z.CreateIndexOptions -> IO ()
 runCreateIndex opts = do
@@ -63,31 +48,7 @@ runCreateIndex opts = do
 
     let ws = fmap fromIntegral (decodeWord32s lbs) :: [Word64]
 
-    IO.withBinaryFile (opts ^. the @"output") IO.WriteMode $ \hOut -> do
-      headerPos <- IO.hTell hOut
-
-      B.hPutBuilder hOut $ mempty
-        <> B.word64LE wordSize              -- Number of bits in a packed word
-        <> B.word64LE (fromIntegral inSize) -- Number of entries
-        <> B.word64LE 0                     -- Number of bytes in packed vector
-
-      startPos <- IO.hTell hOut
-
-      -- TODO Write packed vector instead
-      LBS.hPut hOut (B.toLazyByteString (encodePacked wordSize ws))
-
-      endPos <- IO.hTell hOut
-
-      let vBytes = endPos - startPos
-
-      IO.hSeek hOut IO.AbsoluteSeek headerPos
-
-      B.hPutBuilder hOut $ mempty
-        <> B.word64LE wordSize              -- Number of bits in a packed word
-        <> B.word64LE (fromIntegral inSize) -- Number of entries
-        <> B.word64LE (fromIntegral vBytes) -- Number of bytes in packed vector
-
-      IO.hSeek hOut IO.AbsoluteSeek endPos
+    PV.createFileIndex (opts ^. the @"output") wordSize (fromIntegral inSize) ws
 
 optsCreateIndex :: Parser Z.CreateIndexOptions
 optsCreateIndex = Z.CreateIndexOptions
