@@ -100,8 +100,8 @@ encodePacked wordSize = go 0 0
             then B.word64LE newAcc <>             go excessBits (w .>. (wordSize - excessBits))     ws
             else let freeBits = 64 - totalBits in go totalBits  (newAcc .<. freeBits .>. freeBits)  ws
 
-createFileIndex :: FilePath -> Count -> Count -> [Word64] -> IO ()
-createFileIndex filename wordSize inSize ws = IO.withBinaryFile filename IO.WriteMode $ \hOut -> do
+createFileIndex :: IO.Handle -> Count -> Count -> [Word64] -> IO ()
+createFileIndex hOut wordSize inSize ws = do
   headerPos <- IO.hTell hOut
 
   B.hPutBuilder hOut $ mempty
