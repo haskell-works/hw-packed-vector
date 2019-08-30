@@ -42,8 +42,8 @@ common vector               { build-depends: vector               >= 0.12.0.3   
 common semigroups   { if impl(ghc <  8    ) { build-depends: semigroups     >= 0.16     && < 0.19 } }
 
 common config
-  default-language: Haskell2010
-  ghc-options:      -Wall -O2 -msse4.2
+  default-language:     Haskell2010
+  ghc-options:          -Wall -O2 -msse4.2
 
 library
   import:   base, config
@@ -72,10 +72,10 @@ executable hw-packed-vector
           , optparse-applicative
           , semigroups
           , vector
-  main-is:          Main.hs
-  hs-source-dirs:   app
-  ghc-options:      -threaded -rtsopts -with-rtsopts=-N -O2
-  build-depends:    hw-packed-vector
+  main-is:              Main.hs
+  hs-source-dirs:       app
+  ghc-options:          -threaded -rtsopts -with-rtsopts=-N -O2
+  build-depends:        hw-packed-vector
   other-modules:
       App.Commands
       App.Commands.CreateIndex
@@ -91,17 +91,17 @@ test-suite hw-packed-vector-test
           , hw-hspec-hedgehog
           , hw-prim
           , vector
-  type:             exitcode-stdio-1.0
-  main-is:          Spec.hs
+  type:                 exitcode-stdio-1.0
+  main-is:              Spec.hs
   other-modules:
       HaskellWorks.Data.PackedVector.InternalSpec
       HaskellWorks.Data.PackedVector.PackedVector64Spec
       HaskellWorks.Gen
       Paths_hw_packed_vector
-  hs-source-dirs:   test
-  ghc-options:      -threaded -rtsopts -with-rtsopts=-N
-  build-depends:    hw-packed-vector
-  build-tools:      hspec-discover
+  hs-source-dirs:       test
+  ghc-options:          -threaded -rtsopts -with-rtsopts=-N
+  build-depends:        hw-packed-vector
+  build-tool-depends:   hspec-discover:hspec-discover
 
 benchmark bench
   import:   base, config
@@ -111,9 +111,9 @@ benchmark bench
           , hspec
           , hw-prim
           , vector
-  type:               exitcode-stdio-1.0
-  main-is:            Main.hs
-  hs-source-dirs:     bench
-  other-modules:      Paths_hw_packed_vector
-  build-depends:      hw-packed-vector
-  autogen-modules:    Paths_hw_packed_vector
+  type:                 exitcode-stdio-1.0
+  main-is:              Main.hs
+  hs-source-dirs:       bench
+  other-modules:        Paths_hw_packed_vector
+  build-depends:        hw-packed-vector
+  autogen-modules:      Paths_hw_packed_vector
