@@ -12,7 +12,6 @@ module HaskellWorks.Data.PackedVector.PackedVector64
 
 import Control.DeepSeq
 import Data.Int
-import Data.Semigroup                          ((<>))
 import Data.Word
 import GHC.Generics
 import HaskellWorks.Data.AtIndex
