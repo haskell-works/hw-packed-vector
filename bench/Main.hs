@@ -5,7 +5,6 @@ module Main where
 import Control.Monad
 import Criterion.Main
 import Data.List
-import Data.Monoid      ((<>))
 import Data.Word
 import System.Directory
 
