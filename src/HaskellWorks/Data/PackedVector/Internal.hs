@@ -5,13 +5,13 @@ module HaskellWorks.Data.PackedVector.Internal
   , unpackBits'
   ) where
 
-import           Data.Word
-import           HaskellWorks.Data.Bits.BitWise
-import           HaskellWorks.Data.Bits.FixedBitSize
-import           HaskellWorks.Data.Bits.LoBitsSized
-import           HaskellWorks.Data.Positioning
+import Data.Word
+import HaskellWorks.Data.Bits.BitWise
+import HaskellWorks.Data.Bits.FixedBitSize
+import HaskellWorks.Data.Bits.LoBitsSized
+import HaskellWorks.Data.Positioning
 
-{-# ANN module ("HLint: Reduce duplication" :: String) #-}
+{- HLINT ignore "Reduce duplication"  -}
 
 class Integral a => PackBits a where
   packBits :: Count -> [a] -> [a]

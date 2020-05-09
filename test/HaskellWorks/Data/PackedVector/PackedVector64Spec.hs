@@ -12,7 +12,8 @@ import qualified HaskellWorks.Gen                              as G
 import qualified Hedgehog.Gen                                  as G
 import qualified Hedgehog.Range                                as R
 
-{-# ANN module ("HLint: ignore Redundant do" :: String) #-}
+{- HLINT ignore "Redundant do"        -}
+{- HLINT ignore "Reduce duplication"  -}
 
 spec :: Spec
 spec = describe "HaskellWorks.Data.PackedVector.PackedVector64Spec" $ do
